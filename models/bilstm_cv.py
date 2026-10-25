@@ -1,6 +1,6 @@
 """5-fold cross-validation of a BiLSTM sentiment classifier on train.json.
 
-Reads only train.json, writes results/cv_results.png and results/threshold_sweep.png.
+Reads only train.json, writes results/bilstm_results.png and results/threshold_sweep.png.
 Fixed epoch count, fixed seed, vocabulary rebuilt per fold. Run from the project root.
 
 Usage:
@@ -165,7 +165,7 @@ def main():
         opt = torch.optim.Adam(model.parameters(), lr=args.lr)
         rng = random.Random(args.seed + k)
 
-        losses, f1_curve = [], []
+        losses = []
         for epoch in range(1, args.epochs + 1):
             model.train()
             total = 0.0
@@ -177,8 +177,7 @@ def main():
                 opt.step()
                 total += loss.item() * len(y)
             losses.append(total / len(y_tr))
-            f1_curve.append(f1_score(y_te, (predict(model, ids_te, args.batch_size, device) >= 0.5).astype(int)))
-        curves.append((losses, f1_curve))
+        curves.append(losses)
 
         probs = predict(model, ids_te, args.batch_size, device)
         pred = (probs >= 0.5).astype(int)
@@ -231,27 +230,24 @@ def main():
     fig2.savefig("results/threshold_sweep.png", dpi=130)
     print("saved results/threshold_sweep.png")
 
-    fig, ax = plt.subplots(2, 2, figsize=(12, 9))
-    for k, (losses, f1_curve) in enumerate(curves, 1):
-        ax[0, 0].plot(range(1, len(losses) + 1), losses, label=f"fold {k}")
-        ax[0, 1].plot(range(1, len(f1_curve) + 1), f1_curve, label=f"fold {k}")
-    ax[0, 0].set(title="Training loss (weighted BCE)", xlabel="epoch", ylabel="loss")
-    ax[0, 1].set(title="Held-out F1", xlabel="epoch", ylabel="F1")
-    ax[0, 0].legend()
-    ax[0, 1].legend()
+    fig, ax = plt.subplots(1, 3, figsize=(16, 4.5))
+    for k, losses in enumerate(curves, 1):
+        ax[0].plot(range(1, len(losses) + 1), losses, label=f"fold {k}")
+    ax[0].set(title="Training loss (weighted BCE)", xlabel="epoch", ylabel="loss")
+    ax[0].legend()
     f1s = [m["f1"] for m in results]
-    ax[1, 0].bar(range(1, len(f1s) + 1), f1s)
-    ax[1, 0].axhline(np.mean(f1s), color="r", ls="--", label=f"mean={np.mean(f1s):.4f}")
-    ax[1, 0].set(title="F1 per fold", xlabel="fold", ylabel="F1", ylim=(0.85, 1.0))
-    ax[1, 0].legend()
-    ax[1, 1].imshow(cm, cmap="Blues")
+    ax[1].bar(range(1, len(f1s) + 1), f1s)
+    ax[1].axhline(np.mean(f1s), color="r", ls="--", label=f"mean={np.mean(f1s):.4f}")
+    ax[1].set(title="F1 per fold", xlabel="fold", ylabel="F1", ylim=(0.85, 1.0))
+    ax[1].legend()
+    ax[2].imshow(cm, cmap="Blues")
     for i in range(2):
         for j in range(2):
-            ax[1, 1].text(j, i, str(cm[i, j]), ha="center", va="center", fontsize=13)
-    ax[1, 1].set(title="Pooled confusion matrix", xticks=[0, 1], yticks=[0, 1], xlabel="predicted", ylabel="true")
+            ax[2].text(j, i, str(cm[i, j]), ha="center", va="center", fontsize=13)
+    ax[2].set(title="Pooled confusion matrix", xticks=[0, 1], yticks=[0, 1], xlabel="predicted", ylabel="true")
     fig.tight_layout()
-    fig.savefig("results/cv_results.png", dpi=130)
-    print("saved results/cv_results.png")
+    fig.savefig("results/bilstm_results.png", dpi=130)
+    print("saved results/bilstm_results.png")
 
 
 if __name__ == "__main__":
