@@ -1,0 +1,8 @@
+torch
+transformers
+scikit-learn
+numpy
+matplotlib
+sentencepiece
+protobuf
+tiktoken
