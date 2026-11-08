@@ -1,0 +1,35 @@
+﻿
+W1108 11:58:37.013000 27540 Lib\site-packages\torch\distributed\elastic\multiprocessing\redirects.py:29] NOTE: Redirects are currently not supported in Windows or MacOs.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+device=cuda model=microsoft/deberta-v3-base
+folds=5 epochs=3 batch=16 grad_accum=2 max_len=256 threshold=0.5 seed=42
+reviews=7401
+System.Management.Automation.RemoteException
+Loading weights:   0%|          | 0/198 [00:00<?, ?it/s]
+Loading weights: 100%|##########| 198/198 [00:00<00:00, 27502.72it/s]
+[transformers] [1mDebertaV2ForSequenceClassification LOAD REPORT[0m from: microsoft/deberta-v3-base
+Key                                     | Status     | 
+----------------------------------------+------------+-
+mask_predictions.LayerNorm.bias         | UNEXPECTED | 
+mask_predictions.classifier.weight      | UNEXPECTED | 
+lm_predictions.lm_head.LayerNorm.weight | UNEXPECTED | 
+mask_predictions.LayerNorm.weight       | UNEXPECTED | 
+lm_predictions.lm_head.bias             | UNEXPECTED | 
+lm_predictions.lm_head.dense.weight     | UNEXPECTED | 
+mask_predictions.classifier.bias        | UNEXPECTED | 
+mask_predictions.dense.bias             | UNEXPECTED | 
+mask_predictions.dense.weight           | UNEXPECTED | 
+lm_predictions.lm_head.dense.bias       | UNEXPECTED | 
+lm_predictions.lm_head.LayerNorm.bias   | UNEXPECTED | 
+pooler.dense.bias                       | MISSING    | 
+pooler.dense.weight                     | MISSING    | 
+classifier.bias                         | MISSING    | 
+classifier.weight                       | MISSING    | 
+System.Management.Automation.RemoteException
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  fold 5 epoch 1: loss=0.2610
+  fold 5 epoch 2: loss=0.0962
+  fold 5 epoch 3: loss=0.0594
+fold 5: accuracy=0.9655 f1=0.9799 mean_confidence=0.9899 -> results/deberta_256_fold_5_predictions.csv (699.9s)
