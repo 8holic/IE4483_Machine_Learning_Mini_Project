@@ -1,0 +1,14 @@
+{
+  "folds": 5,
+  "epochs": 3,
+  "batch_size": 32,
+  "eval_batch_size": 64,
+  "lr": 2e-05,
+  "max_len": 128,
+  "weight_decay": 0.01,
+  "warmup_frac": 0.1,
+  "grad_clip": 1.0,
+  "threshold": 0.5,
+  "fp16": true,
+  "seed": 42
+}
